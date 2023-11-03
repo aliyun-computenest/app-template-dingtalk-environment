@@ -1,13 +1,16 @@
-# ECS单机版Web应用说明文档
+# 钉钉应用ECS环境的说明文档
 
 ## 概述
-ECS单机版Web应用模板提供了快速体验应用管理的最小化HelloWorld Web应用。
-部署此应用时，用户只需要选择示例软件并输入ECS实例密码等少量参数，即可一键部署运行环境并设置好代码的持续集成和持续部署。
 
-部署完成的应用分组包含一个ECS实例、一个从示例代码源编译并发布应用到ECS实例上的CICD流水线，并自动触发一次初始发布。
-待应用部署完成且流水线执行成功时，Web服务已经访问。
+此应用模板提供了一个快速创建钉钉应用的方案，该应用模板符合钉钉应用基础设施的架构，
+钉钉应用基础设施的架构如下图所示：
+<img src="1.png" width="1100" height="800" align="bottom"/>
 
-您可以在发布页修改流水线中的代码源为您自己的代码，重新发布后即可部署您自己的应用代码。
+部署完成的应用分组包含一个或多个ECS实例、一个RDS实例、一个SLB实例和NAT网关
+- ECS实例自动加入SLB后端服务器组。
+- ECS实例的Ip自己加入到RDS实例的安全白名单中
+- SLB实例绑定弹性公网IP提供公网服务，ECS实例不开公网提高安全性。
+
 
 ## 计费说明
 部署此应用的费用主要涉及：
@@ -15,6 +18,9 @@ ECS单机版Web应用模板提供了快速体验应用管理的最小化HelloWor
 - 所选vCPU与内存规格
 - 磁盘容量
 - 公网带宽
+- 所选SLB规格
+- 所选数据库的规格
+- 
 
 计费方式包括：
 
@@ -29,68 +35,40 @@ ECS单机版Web应用模板提供了快速体验应用管理的最小化HelloWor
 
 为了部署此应用，所需权限如下表所示。
 
-| 权限策略名称 | 备注 |
-| --- | --- |
-| AliyunECSFullAccess | 管理云服务器服务（ECS）的权限 |
-| AliyunVPCFullAccess | 管理专有网络（VPC）的权限 |
-| AliyunROSFullAccess | 管理资源编排服务（ROS）的权限 |
+| 权限策略名称                       | 备注 |
+|------------------------------| --- |
+| AliyunECSFullAccess          | 管理云服务器服务（ECS）的权限 |
+| AliyunVPCFullAccess          | 管理专有网络（VPC）的权限 |
+| AliyunROSFullAccess          | 管理资源编排服务（ROS）的权限 |
 | AliyunCloudMonitorFullAccess | 管理云监控（CloudMonitor）的权限 |
-| AliyunRDCFullAccess | 管理云效的权限 |
+| AliyunSLBFullAccess          | 管理负载均衡服务（SLB）的权限|
+| AliyunRDSFullAccess          | 管理云数据库服务(RDS)的权限|
 
 
 ## 部署流程
-### 访问应用管理
-应用管理可以从三个入口访问：
-
-- [ECS控制台入口](https://ecs.console.aliyun.com/app/list)
-- [系统管理与运维服务OOS入口](https://oos.console.aliyun.com/app/list)
-- [计算巢入口](https://computenest.console.aliyun.com/app/list)
-
 
 ### 部署步骤
-1. 访问应用管理控制台，点击“创建应用”后选择“通过模板创建”，在选择“ECS单机版Web应用”模板，点击“使用模板”
+1. 访问应用管理控制台，点击“创建应用”后选择“通过模板创建”，再选择“钉钉应用ECS环境”模板，点击“使用模板”
 2. 输入应用名称、应用描述后，点击“添加分组”
 3. 输入部署参数，保存分组。保存前可以预览费用明细和参数。
-<img src="1.png" width="1100" height="800" align="bottom"/>
-<img src="2.png" width="1100" height="800" align="bottom"/>
-<img src="3.png" width="1100" height="800" align="bottom"/>
-<img src="4.png" width="1100" height="400" align="bottom"/>
-4. 输入应用高级设置后，点击创建
-
-### 部署参数说明
-您在创建服务实例的过程中，需要配置服务实例信息。下文介绍stable-diffusion服务实例输入参数的详细信息。
-
-| 参数组     | 参数项    | 示例           | 说明                                                                        |
-|---------|--------|--------------|---------------------------------------------------------------------------|
-| 应用CICD配置 |  示例应用        | Java         | 选择不同编程语言的Web服务示例应用                                                                     |
-|  应用CICD配置      | 云效企业      | 企业名      | 默认使用当前账号绑定的云效企业。如果未绑定请在OOS全局配置->发布配置中绑定云效企业 |
-|  应用CICD配置      | 是否新建云效ECS服务连接      | 是      | 是否以当前账号权限创建云效ECS服务连接，云效使用服务连接在ECS实例上部署 |
-|  应用CICD配置      | 是否运行CICD流水线      | 是      | 是否运行一次CICD流水线，执行应用的初次发布 |
-| ECS配置  | 付费类型   | 按量付费 或 包年包月  |
-| ECS配置 | 实例类型   | ecs.g6.large | 实例规格，可以根据实际需求选择                                                           |
-| ECS配置 | 流量付费类型   | 按使用流量 | 实例规格，可以根据实际需求选择                                                           |
-| ECS配置 | 实例公网带宽   |   10M   | 出公网最大带宽|
-| ECS配置 | 系统盘类型   |  cloud_essd    | |
-| ECS配置 | 系统盘大小   |  120GB    | |
-| ECS配置 | 实例密码   |      | 登录密码|
-| 可用区配置 | 可用区   |  杭州可用区K    | |
-| 网络配置    | 是否新建VPC  | 是     | 是否创建一个新VPC
-| 网络配置    | 专有网络IPv4网段  | 192.168.0.0/16     | VPC的ip地址段范围                                                               |
-| 网络配置    | 交换机子网网段   | 192.168.0.0/24     | 交换机子网网段                                                                   |
-| 网络配置    | 现有VPC的实例ID   | vpc-xxx     |                                                                    |
-| 网络配置    | 现有网络交换机ID   | vsw-xxx     |                                                                    |
+   - 设置场景参数，按提示设置参数完成后会生成预估费用提示，点击费用明细可以查看费用详情，确认费用后点击下一步。
+     <img src="2.png" width="1100" height="800" align="bottom"/>
+     - 套餐规格及费用预估（仅供参考，最终金额以实际产生的费用为准）详情如下：
+       - 按量付费：
+         <img src="3.png" width="1100" height="800" align="bottom"/>
+       - 预付费6个月：
+         <img src="4.png" width="1100" height="800" align="bottom"/>
+       - 预付费1年：
+         <img src="5.png" width="1100" height="800" align="bottom"/>
+     - 费用明细详情示例如下：
+       <img src="6.png" width="1100" height="800" align="bottom"/>
+4. 确认已配置参数无误后，点击确定创建应用分组。
+   <img src="7.png" width="1100" height="800" align="bottom"/>
 
 ### 验证结果
 
 1. 查看应用。应用创建成功后，环境部署时间大约需要1分钟。状态变为“已部署”即为部署完成
-<img src="5.png" width="900" height="600" align="bottom"/>
-2. 部署完成后，会自动进行首次的应用发布
-<img src="6.png" width="1500" height="500" align="bottom"/>
-3. 点击流水线名称可以看到流水线状态
-<img src="7.png" width="1500" height="500" align="bottom"/>
-4. 发布完成后，从资源管理中找到公网IP
-<img src="8.png" width="1500" height="500" align="bottom"/>
-5. 通过访问http://公网IP:8080即可访问HelloWorld示例服务
-<img src="9.png" width="800" height="300" align="bottom"/>
-6. 编辑流水线，可以替换代码源为您自己的应用代码源。重新发布后，就可以访问您自己的服务了。
-注意如果您的服务使用了8080外的其他端口，需要在安全组中放开该端口的入方向访问。在资源管理中可以找到安全组，点击修改安全组规则。
+   <img src="8.png" width="900" height="600" align="bottom"/>
+2. 应用分组部署完成后，您可以在"资源管理"标签下看到创建的所有资源。
+   <img src="9.png" width="1500" height="500" align="bottom"/>
+3. 在资源中部署好您的软件，就可以访问您自己的服务了。
