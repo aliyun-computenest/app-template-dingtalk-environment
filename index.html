@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="计算巢是阿里云开放给企业应用服务商的服务管理平台。服务商能够在计算巢上发布私有化部署服务，为其客户提供云上软件一键部署的能力；同时也支持全托管模式的服务，赋能服务商托管其客户资源。">
+  <title>钉钉应用ECS环境的说明文档 - Aliyun 应用模板ECS单机版Web应用</title>
+
+  <link rel="shortcut icon" href="img/favicon.ico">
+
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  
+
+  
+
+  
+  
+
+  
+    <script src="search/main.js"></script>
+  
+
+  
+
+  <script src="js/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="nav-inner">
+        <div class="logo">
+          <img src="./img/logo-2x.png">
+        </div>
+        <div class="nav-list">
+          <ul>
+          
+              <li><a href="#ecs">钉钉应用ECS环境的说明文档</a></li>
+              
+                  <li><a href="#_1">概述</a></li>
+                  
+              
+                  <li><a href="#_2">计费说明</a></li>
+                  
+              
+                  <li><a href="#ram">RAM账号所需权限</a></li>
+                  
+              
+                  <li><a href="#_3">部署流程</a></li>
+                  
+                      <li class="li-h3"><a href="#_4">部署步骤</a></li>
+                  
+                      <li class="li-h3"><a href="#_5">验证结果</a></li>
+                  
+              
+          
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="content theme-github">
+      
+      <div class="content-inner">        
+        
+        <h1 id="ecs">钉钉应用ECS环境的说明文档</h1>
+<h2 id="_1">概述</h2>
+<p>此应用模板提供了一个快速创建钉钉应用的方案，该应用模板符合钉钉应用基础设施的架构，
+钉钉应用基础设施的架构如下图所示：
+<img src="1.png" width="1100" height="800" align="bottom"/></p>
+<p>部署完成的应用分组包含一个或多个ECS实例、一个RDS实例、一个SLB实例和NAT网关
+- ECS实例自动加入SLB后端服务器组。
+- ECS实例的Ip自己加入到RDS实例的安全白名单中
+- SLB实例绑定弹性公网IP提供公网服务，ECS实例不开公网提高安全性。</p>
+<h2 id="_2">计费说明</h2>
+<p>部署此应用的费用主要涉及：</p>
+<ul>
+<li>所选vCPU与内存规格</li>
+<li>磁盘容量</li>
+<li>公网带宽</li>
+<li>所选SLB规格</li>
+<li>所选数据库的规格</li>
+<li></li>
+</ul>
+<p>计费方式包括：</p>
+<ul>
+<li>按量付费（小时）</li>
+<li>包年包月</li>
+</ul>
+<p>预估费用在部署前可实时看到。</p>
+<h2 id="ram">RAM账号所需权限</h2>
+<p>若您使用RAM用户创建应用，为了使用应用管理的完整功能，需要对使用的RAM用户的账号添加相应资源的权限。添加RAM权限的详细操作，请参见<a href="https://help.aliyun.com/document_detail/455313.html">为RAM用户授权</a>。</p>
+<p>为了部署此应用，所需权限如下表所示。</p>
+<table>
+<thead>
+<tr>
+<th>权限策略名称</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AliyunECSFullAccess</td>
+<td>管理云服务器服务（ECS）的权限</td>
+</tr>
+<tr>
+<td>AliyunVPCFullAccess</td>
+<td>管理专有网络（VPC）的权限</td>
+</tr>
+<tr>
+<td>AliyunROSFullAccess</td>
+<td>管理资源编排服务（ROS）的权限</td>
+</tr>
+<tr>
+<td>AliyunCloudMonitorFullAccess</td>
+<td>管理云监控（CloudMonitor）的权限</td>
+</tr>
+<tr>
+<td>AliyunSLBFullAccess</td>
+<td>管理负载均衡服务（SLB）的权限</td>
+</tr>
+<tr>
+<td>AliyunRDSFullAccess</td>
+<td>管理云数据库服务(RDS)的权限</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">部署流程</h2>
+<h3 id="_4">部署步骤</h3>
+<ol>
+<li>访问应用管理控制台，点击“创建应用”后选择“通过模板创建”，再选择“钉钉应用ECS环境”模板，点击“使用模板”</li>
+<li>输入应用名称、应用描述后，点击“添加分组”</li>
+<li>输入部署参数，保存分组。保存前可以预览费用明细和参数。</li>
+<li>设置场景参数，按提示设置参数完成后会生成预估费用提示，点击费用明细可以查看费用详情，确认费用后点击下一步。
+     <img src="2.png" width="1100" height="800" align="bottom"/><ul>
+<li>套餐规格及费用预估（仅供参考，最终金额以实际产生的费用为准）详情如下：</li>
+<li>按量付费：
+     <img src="3.png" width="1100" height="800" align="bottom"/></li>
+<li>预付费6个月：
+     <img src="4.png" width="1100" height="800" align="bottom"/></li>
+<li>预付费1年：
+     <img src="5.png" width="1100" height="800" align="bottom"/></li>
+<li>费用明细详情示例如下：
+   <img src="6.png" width="1100" height="800" align="bottom"/></li>
+</ul>
+</li>
+<li>确认已配置参数无误后，点击确定创建应用分组。
+   <img src="7.png" width="1100" height="800" align="bottom"/></li>
+</ol>
+<h3 id="_5">验证结果</h3>
+<ol>
+<li>查看应用。应用创建成功后，环境部署时间大约需要1分钟。状态变为“已部署”即为部署完成
+   <img src="8.png" width="900" height="600" align="bottom"/></li>
+<li>应用分组部署完成后，您可以在"资源管理"标签下看到创建的所有资源。
+   <img src="9.png" width="1500" height="500" align="bottom"/></li>
+<li>在资源中部署好您的软件，就可以访问您自己的服务了。</li>
+</ol>
+        
+      </div>
+
+      <div class="copyrights">© 2009-2022 Aliyun.com 版权所有</div>
+    </div>
+  </div>
+  
+  <!--
+  MkDocs version      : 1.5.3
+  Docs Build Date UTC : 2023-11-09 11:50:24.033421+00:00
+  -->
+</body>
+</html>
